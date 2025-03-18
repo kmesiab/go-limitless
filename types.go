@@ -2,23 +2,43 @@ package go_limitless
 
 import "time"
 
+// Lifelog A single lifelog entry
 type Lifelog struct {
-	ID       string        `json:"id"`
-	Title    string        `json:"title"`
-	Markdown string        `json:"markdown,omitempty"`
-	Contents []ContentNode `json:"contents"`
+	// Unique identifier
+	ID string
+
+	// Title (equal to the first heading1 node)
+	Title string
+
+	// Raw markdown content (optional)
+	Markdown string
+
+	// Structured content nodes
+	Contents []ContentNode
 }
 
+// ContentNode representing a section of the lifelog
 type ContentNode struct {
-	Type              string        `json:"type"`
-	Content           string        `json:"content"`
-	StartTime         string        `json:"startTime"`
-	EndTime           string        `json:"endTime"`
-	StartOffsetMs     int           `json:"startOffsetMs"`
-	EndOffsetMs       int           `json:"endOffsetMs"`
-	Children          []ContentNode `json:"children,omitempty"`
-	SpeakerName       *string       `json:"speakerName,omitempty"`
-	SpeakerIdentifier *string       `json:"speakerIdentifier,omitempty"`
+	// Node type (heading1, heading2, heading3, blockquote, etc)
+	Type string
+
+	// Content text
+	Content string
+
+	// Timing information in ISO format for the given timezone
+	StartTime string
+	EndTime   string
+
+	// Timing offsets in milliseconds from entry start
+	StartOffsetMs int
+	EndOffsetMs   int
+
+	// Nested content nodes
+	Children []ContentNode
+
+	// Speaker information for certain node types (e.g., blockquote)
+	SpeakerName       *string // Optional speaker identifier
+	SpeakerIdentifier *string // Optional, "user" when speaker is identified as the user
 }
 
 type MetaLifelogs struct {

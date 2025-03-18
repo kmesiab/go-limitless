@@ -140,3 +140,7 @@ func (c *Client) GetLifelog(ctx context.Context, lifelogID string) (*Lifelog, er
 
 	return &lifelog, nil
 }
+
+func BoolPtr(b bool) *bool {
+	return &b
+}

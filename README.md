@@ -90,15 +90,38 @@ func main() {
 
 ```go
 type GetLifelogsParams struct {
-    Timezone        string    // IANA timezone specifier
-    Date            string    // YYYY-MM-DD format
-    Start           time.Time // Start of time range
-    End             time.Time // End of time range
-    Cursor          string    // Pagination cursor
-    Direction       string    // "asc" or "desc"
-    IncludeMarkdown *bool     // Include markdown content
-    IncludeHeadings *bool     // Include headings
-    Limit           int       // Max results to return
+   // IANA timezone specifier (e.g., "America/New_York")
+   // If not specified, UTC is used
+   Timezone string
+   
+   // Date in YYYY-MM-DD format
+   // Returns all entries beginning on this date in the given timezone
+   Date string
+   
+   // Start of time range in ISO-8601 format
+   // YYYY-MM-DD or YYYY-MM-DD HH:mm:SS
+   // Timezone/offsets are ignored
+   Start time.Time
+   
+   // End of time range in ISO-8601 format
+   // YYYY-MM-DD or YYYY-MM-DD HH:mm:SS
+   // Timezone/offsets are ignored
+   End time.Time
+   
+   // Pagination cursor for retrieving next set of entries
+   Cursor string
+   
+   // Sort direction: "asc" or "desc" (default: "desc")
+   Direction string
+   
+   // Whether to include markdown content (default: true)
+   IncludeMarkdown *bool
+   
+   // Whether to include headings (default: true)
+   IncludeHeadings *bool
+   
+   // Maximum number of entries to return
+   Limit int
 }
 ```
 
