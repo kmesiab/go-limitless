@@ -29,15 +29,41 @@ func NewClient(apiKey string) *Client {
 }
 
 // GetLifelogs retrieves a list of lifelogs
-func (c *Client) GetLifelogs(ctx context.Context, params map[string]string) (*LifelogsResponse, error) {
+func (c *Client) GetLifelogs(ctx context.Context, params *GetLifelogsParams) (*LifelogsResponse, error) {
 	endpoint, err := url.Parse(fmt.Sprintf("%s/lifelogs", c.BaseURL))
 	if err != nil {
 		return nil, err
 	}
 
 	query := endpoint.Query()
-	for key, value := range params {
-		query.Set(key, value)
+	if params != nil {
+		if params.Timezone != "" {
+			query.Set("timezone", params.Timezone)
+		}
+		if params.Date != "" {
+			query.Set("date", params.Date)
+		}
+		if !params.Start.IsZero() {
+			query.Set("start", params.Start.Format(time.RFC3339))
+		}
+		if !params.End.IsZero() {
+			query.Set("end", params.End.Format(time.RFC3339))
+		}
+		if params.Cursor != "" {
+			query.Set("cursor", params.Cursor)
+		}
+		if params.Direction != "" {
+			query.Set("direction", params.Direction)
+		}
+		if params.IncludeMarkdown != nil {
+			query.Set("includeMarkdown", fmt.Sprintf("%v", *params.IncludeMarkdown))
+		}
+		if params.IncludeHeadings != nil {
+			query.Set("includeHeadings", fmt.Sprintf("%v", *params.IncludeHeadings))
+		}
+		if params.Limit > 0 {
+			query.Set("limit", fmt.Sprintf("%d", params.Limit))
+		}
 	}
 	endpoint.RawQuery = query.Encode()
 
