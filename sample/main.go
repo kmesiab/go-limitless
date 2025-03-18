@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	limitless "github.com/kmesiab/go-limitless"
 )
@@ -20,12 +21,14 @@ func main() {
 
 	// Define query parameters using the proper struct
 	params := &limitless.GetLifelogsParams{
-		Limit: 10,
-		// Can also use other available parameters:
-		// Timezone:        "America/New_York",
-		// Date:            "2023-12-25",
-		// Direction:       "desc",
-		// IncludeMarkdown: limitless.BoolPtr(true),
+		Timezone:        "America/New_York",
+		Date:            "2023-12-25",                                  // Single day
+		Start:           time.Date(2023, 12, 25, 0, 0, 0, 0, time.UTC), // Or date range
+		End:             time.Date(2023, 12, 26, 0, 0, 0, 0, time.UTC),
+		Direction:       "desc",
+		IncludeMarkdown: limitless.BoolPtr(true),
+		IncludeHeadings: limitless.BoolPtr(true),
+		Limit:           50,
 	}
 
 	// Fetch lifelogs
