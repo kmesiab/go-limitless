@@ -9,8 +9,9 @@
 ## Limitless API Client for Go
 
 `go-limitless` is a Go client library for interacting with the
-**Limitless API**, providing access to **lifelogs** with robust
-features like pagination, authentication, and error handling.
+**[Limitless API](https://www.limitless.ai/developers)**, providing access to
+**lifelogs** with robust features like pagination, authentication, and error
+handling.
 
 ---
 
