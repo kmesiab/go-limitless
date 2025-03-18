@@ -54,32 +54,51 @@ client := limitless.NewClient("your-api-key")
 package main
 
 import (
-     "context"
-     "fmt"
-     "log"
+   "context"
+   "fmt"
+   "log"
 
-     limitless "github.com/kmesiab/go-limitless"
+   limitless "github.com/kmesiab/go-limitless"
 )
 
 func main() {
-     // Create client with API key
-     client := limitless.NewClient("your-api-key")
+   // Create client with API key
+   client := limitless.NewClient("your-api-key")
 
-     // Define query parameters
-     params := map[string]string{
-          "limit": "10",
-     }
+   // Define query parameters
+   params := &limitless.GetLifelogsParams{
+      Limit: 10,
+      Timezone: "America/New_York",
+      Direction: "desc",
+      IncludeMarkdown: limitless.BoolPtr(true),
+   }
 
-     // Fetch lifelogs
-     lifelogs, err := client.GetLifelogs(context.Background(), params)
-     if err != nil {
-          log.Fatalf("Error fetching lifelogs: %v", err)
-     }
+   // Fetch lifelogs
+   lifelogs, err := client.GetLifelogs(context.Background(), params)
+   if err != nil {
+      log.Fatalf("Error fetching lifelogs: %v", err)
+   }
 
-     // Process response
-     for _, log := range lifelogs.Data.Lifelogs {
-          fmt.Printf("Lifelog: %s - %s\n", log.ID, log.Title)
-     }
+   // Process response
+   for _, log := range lifelogs.Data.Lifelogs {
+      fmt.Printf("Lifelog: %s - %s\n", log.ID, log.Title)
+   }
+}
+```
+
+### Available Parameters
+
+```go
+type GetLifelogsParams struct {
+    Timezone        string    // IANA timezone specifier
+    Date            string    // YYYY-MM-DD format
+    Start           time.Time // Start of time range
+    End             time.Time // End of time range
+    Cursor          string    // Pagination cursor
+    Direction       string    // "asc" or "desc"
+    IncludeMarkdown *bool     // Include markdown content
+    IncludeHeadings *bool     // Include headings
+    Limit           int       // Max results to return
 }
 ```
 
@@ -103,7 +122,12 @@ fmt.Printf("Lifelog ID: %s, Title: %s\n", lifelog.ID, lifelog.Title)
 
 ```go
 ctx := context.Background()
-params := map[string]string{"limit": "10"}
+params := &limitless.GetLifelogsParams{
+   Limit: 10,
+   Timezone: "America/New_York",
+   Direction: "desc",
+   IncludeMarkdown: limitless.BoolPtr(true),
+}
 
 // Fetch first page
 firstPage, err := client.GetLifelogs(ctx, params)
