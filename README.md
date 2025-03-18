@@ -1,4 +1,4 @@
-# go-limitless
+# Go-Limitless
 
 ![Golang](https://img.shields.io/badge/Go-00add8.svg?labelColor=171e21&style=for-the-badge&logo=go)  
 ![Build](https://github.com/kmesiab/go-limitless/actions/workflows/go-build.yml/badge.svg)
@@ -8,7 +8,7 @@
 
 ## Limitless API Client for Go
 
-`go-limitless` is a Go client library for interacting with the
+`go-limitless` is a lightweight Go client library for interacting with the
 **[Limitless API](https://www.limitless.ai/developers)**, providing access to
 **lifelogs** with robust features like pagination, authentication, and error
 handling.
