@@ -236,8 +236,3 @@ We appreciate your help in making `go-limitless` better! 🚀
 ## License
 
 This library is distributed under the **MIT license**.
-
----
-
-This version enhances readability, provides more structured sections, and
-includes practical examples. Let me know if you want any refinements! 🚀
