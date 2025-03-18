@@ -10,13 +10,13 @@ import (
 
 func TestGetLifelogs_Success(t *testing.T) {
 	mockResponse := `{
-		"data": {
-			"lifelogs": [{ "id": "123", "title": "Test Entry", "markdown": "# Heading", "contents": [] }]
-		},
-		"meta": {
-			"lifelogs": { "count": 1 }
-		}
-	}`
+        "data": {
+            "lifelogs": [{ "id": "123", "title": "Test Entry", "markdown": "# Heading", "contents": [] }]
+        },
+        "meta": {
+            "lifelogs": { "count": 1 }
+        }
+    }`
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -31,7 +31,9 @@ func TestGetLifelogs_Success(t *testing.T) {
 	client.BaseURL = ts.URL
 
 	ctx := context.Background()
-	params := map[string]string{"limit": "1"}
+	params := &GetLifelogsParams{
+		Limit: 1,
+	}
 	resp, err := client.GetLifelogs(ctx, params)
 
 	if err != nil {
@@ -53,7 +55,9 @@ func TestGetLifelogs_ErrorResponse(t *testing.T) {
 	client.BaseURL = ts.URL
 
 	ctx := context.Background()
-	params := map[string]string{"limit": "1"}
+	params := &GetLifelogsParams{
+		Limit: 1,
+	}
 	_, err := client.GetLifelogs(ctx, params)
 
 	if err == nil {
@@ -75,7 +79,9 @@ func TestGetLifelogs_InvalidJSON(t *testing.T) {
 	client.BaseURL = ts.URL
 
 	ctx := context.Background()
-	params := map[string]string{"limit": "1"}
+	params := &GetLifelogsParams{
+		Limit: 1,
+	}
 	_, err := client.GetLifelogs(ctx, params)
 
 	if err == nil {
@@ -95,7 +101,9 @@ func TestGetLifelogs_Timeout(t *testing.T) {
 	client.BaseURL = ts.URL
 
 	ctx := context.Background()
-	params := map[string]string{"limit": "1"}
+	params := &GetLifelogsParams{
+		Limit: 1,
+	}
 	_, err := client.GetLifelogs(ctx, params)
 
 	if err == nil {
@@ -106,7 +114,9 @@ func TestGetLifelogs_Timeout(t *testing.T) {
 func TestGetLifelogs_MissingAuthToken(t *testing.T) {
 	client := NewClient("") // Empty API Key
 	ctx := context.Background()
-	params := map[string]string{"limit": "1"}
+	params := &GetLifelogsParams{
+		Limit: 1,
+	}
 	_, err := client.GetLifelogs(ctx, params)
 
 	if err == nil {
@@ -124,7 +134,9 @@ func TestGetLifelogs_BadRequest(t *testing.T) {
 	client.BaseURL = ts.URL
 
 	ctx := context.Background()
-	params := map[string]string{"limit": "invalid"}
+	params := &GetLifelogsParams{
+		Limit: -1, // Invalid limit to trigger bad request
+	}
 	_, err := client.GetLifelogs(ctx, params)
 
 	if err == nil {
@@ -248,4 +260,70 @@ func TestGetLifelog_Unauthorized(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected unauthorized error but got none")
 	}
+}
+
+func TestGetLifelogs_Parameters(t *testing.T) {
+	tests := []struct {
+		name          string
+		params        *GetLifelogsParams
+		expectedQuery string
+		mockResponse  string
+		expectedError bool
+	}{
+		{
+			name: "all parameters",
+			params: &GetLifelogsParams{
+				Timezone:        "America/New_York",
+				Date:            "2023-12-25",
+				Start:           time.Date(2023, 12, 25, 0, 0, 0, 0, time.UTC),
+				End:             time.Date(2023, 12, 26, 0, 0, 0, 0, time.UTC),
+				Cursor:          "next-page",
+				Direction:       "desc",
+				IncludeMarkdown: boolPtr(true),
+				IncludeHeadings: boolPtr(false),
+				Limit:           10,
+			},
+			expectedQuery: "cursor=next-page&date=2023-12-25&direction=desc&end=2023-12-26T00%3A00%3A00Z&includeHeadings=false&includeMarkdown=true&limit=10&start=2023-12-25T00%3A00%3A00Z&timezone=America%2FNew_York",
+		},
+		{
+			name: "minimal parameters",
+			params: &GetLifelogsParams{
+				Limit: 1,
+			},
+			expectedQuery: "limit=1",
+		},
+		{
+			name:          "nil parameters",
+			params:        nil,
+			expectedQuery: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if got := r.URL.RawQuery; got != tt.expectedQuery {
+					t.Errorf("expected query %q, got %q", tt.expectedQuery, got)
+				}
+				w.WriteHeader(http.StatusOK)
+				_, err := w.Write([]byte(`{"data":{"lifelogs":[]},"meta":{"lifelogs":{"count":0}}}`))
+				if err != nil {
+					return
+				}
+			}))
+			defer ts.Close()
+
+			client := NewClient("test-api-key")
+			client.BaseURL = ts.URL
+
+			_, err := client.GetLifelogs(context.Background(), tt.params)
+			if (err != nil) != tt.expectedError {
+				t.Errorf("expected error %v, got %v", tt.expectedError, err)
+			}
+		})
+	}
+}
+
+func boolPtr(b bool) *bool {
+	return &b
 }

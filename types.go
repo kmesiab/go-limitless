@@ -1,5 +1,7 @@
 package go_limitless
 
+import "time"
+
 type Lifelog struct {
 	ID       string        `json:"id"`
 	Title    string        `json:"title"`
@@ -31,4 +33,16 @@ type LifelogsResponse struct {
 	Meta struct {
 		Lifelogs MetaLifelogs `json:"lifelogs"`
 	} `json:"meta"`
+}
+
+type GetLifelogsParams struct {
+	Timezone        string    `url:"timezone,omitempty"`        // IANA timezone specifier
+	Date            string    `url:"date,omitempty"`            // YYYY-MM-DD format
+	Start           time.Time `url:"start,omitempty"`           // Start of time range
+	End             time.Time `url:"end,omitempty"`             // End of time range
+	Cursor          string    `url:"cursor,omitempty"`          // Pagination cursor
+	Direction       string    `url:"direction,omitempty"`       // asc or desc
+	IncludeMarkdown *bool     `url:"includeMarkdown,omitempty"` // Include markdown content
+	IncludeHeadings *bool     `url:"includeHeadings,omitempty"` // Include headings
+	Limit           int       `url:"limit,omitempty"`           // Max results to return
 }
